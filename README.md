@@ -6,6 +6,22 @@ We provide this tool because by default the RingCentral Extensible core module o
 There are partners and internal teams which need access to internal/beta API. So they can use this tool to generate code themselves.
 
 
+## Install
+
+```
+yarn add ringcentral-code-generator
+```
+
+
+## Usage
+
+```
+import generate from 'ringcentral-code-generator'
+
+generate('/path/to/spec.yml', '/path/to/output/folder');
+```
+
+
 ## Test
 
 Rename `.env.sample` to `.env`. Edit `.env` to specify the path to spec and the output folder.
