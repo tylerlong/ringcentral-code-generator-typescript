@@ -1,7 +1,11 @@
 {
+  "name": "ringcentral-code-generator",
+  "version": "0.1.0",
   "license": "MIT",
+  "main": "build/index.js",
   "scripts": {
-    "test": "ts-node -r dotenv-override-true/config src/test.ts"
+    "test": "ts-node -r dotenv-override-true/config src/test.ts",
+    "prepublishOnly": "tsc"
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.2",
