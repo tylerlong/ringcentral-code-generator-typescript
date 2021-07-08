@@ -4,3 +4,12 @@ This is the code generator for [RingCentral Extensible](https://github.com/ringc
 
 We provide this tool because by default the RingCentral Extensible core module only supports public API. 
 There are partners and internal teams which need access to internal/beta API. So they can use this tool to generate code themselves.
+
+
+## Test
+
+Rename `.env.sample` to `.env`. Edit `.env` to specify the path to spec and the output folder.
+
+```
+yarn test
+```
