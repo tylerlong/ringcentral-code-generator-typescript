@@ -1602,11 +1602,6 @@ onetime@^5.1.0, onetime@^5.1.2:
   dependencies:
     mimic-fn "^2.1.0"
 
-openapi-types@8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-8.0.0.tgz#7e1979538798d31a3c3bfed667e5e9295402f9bc"
-  integrity sha512-dcHYyCDOAy4QQTrur5Sn1L3lPVspB7rd04Rw/Q7AsMvfV797IiWgmKziFCbq8VhnBoREU/SPPSBDxtK9Biwa1g==
-
 openapi-types@^9.1.0:
   version "9.1.0"
   resolved "https://registry.yarnpkg.com/openapi-types/-/openapi-types-9.1.0.tgz#a2ab0acc5198c1725f83d7cbe063efd1bcd0479e"
@@ -1897,12 +1892,12 @@ rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-ringcentral-open-api-parser@^0.4.6:
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.4.6.tgz#fddbfe99c7d6ed6179ad6d1cf99ad6f37f2d96ac"
-  integrity sha512-l4j33OQWczJDuFFOBol51fxKEyg4bY11hmXpR/5TxyX2IwjP3oNWQcWYl8pfp9UkxIYbCXqu2RewvXJRZgwLZQ==
+ringcentral-open-api-parser@^0.4.9:
+  version "0.4.9"
+  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.4.9.tgz#50a93efef4e1a08765d9b0a510312f962a318b5f"
+  integrity sha512-x9Kvicebnoa+Pokfoulkh3OQWtTYcCm8Yzlbw5+a40rze+g0UNooXOzcB8PLk5/EExKxxN9AK5jghxUIbEaxpw==
   dependencies:
-    openapi-types "8.0.0"
+    openapi-types "^9.1.0"
     ramda "^0.27.1"
 
 run-async@^2.4.0:
