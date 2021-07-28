@@ -86,15 +86,13 @@ const generate = (paths: Path[], outputDir: string) => {
         markdown.push(
           `- \`${parameter}\` is of type [${capitalizeFirstLetter(
             parameter
-          )}](./packages/core/definitions/${capitalizeFirstLetter(
-            parameter
-          )}.ts)`
+          )}](./definitions/${capitalizeFirstLetter(parameter)}.ts)`
         );
       }
 
       if (operation.responseSchema?.$ref) {
         markdown.push(
-          `- \`result\` is of type [${operation.responseSchema.$ref}](./packages/core/definitions/${operation.responseSchema.$ref}.ts)`
+          `- \`result\` is of type [${operation.responseSchema.$ref}](./definitions/${operation.responseSchema.$ref}.ts)`
         );
       } else if (!operation.responseSchema) {
         markdown.push('- `result` is an empty string');
