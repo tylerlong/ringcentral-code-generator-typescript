@@ -69,9 +69,14 @@ const generate = (models: Model[], outputDir: string) => {
   };
 
   models.forEach(model => {
-    let code = `${model.description ? `// ${model.description}\n` : ''}class ${
-      model.name
-    } {
+    let code = `${
+      model.description
+        ? `/**\n${model.description
+            .split('\n')
+            .map(line => ' * ' + line)
+            .join('\n')}\n*/\n`
+        : ''
+    }class ${model.name} {
     ${model.fields.map(f => generateField(f)).join('\n\n  ')}
   }
   export default ${model.name};
