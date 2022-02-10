@@ -24,14 +24,16 @@ const generate = (paths: Path[], outputDir: string) => {
           hasParent ? '${this.parent.path()}' : ''
         }/${token}/\${this.${parameter}}\`;
     }
-    return \`${hasParent ? '${this.parent.path()}' : ''}/${token}\`;
+    return ${hasParent ? '`${this.parent.path()}' : "'"}/${token}${
+        hasParent ? '`' : "'"
+      };
   }`;
     } else {
       return `path(): string {
-    return \`${hasParent ? '${this.parent.path()}' : ''}/${token.replace(
+    return ${hasParent ? '`${this.parent.path()}' : "'"}/${token.replace(
         'dotSearch',
         '.search'
-      )}\`;
+      )}${hasParent ? '`' : "'"};
   }`;
     }
   };
