@@ -78,16 +78,18 @@ const generate = (models: Model[], outputDir: string) => {
         : ''
     }class ${model.name} {
     ${model.fields.map(f => generateField(f)).join('\n\n  ')}
-  }
-  export default ${model.name};
-  `;
+}
+
+export default ${model.name};
+`;
 
     // imports
     const match = code.match(/(?<=^ {2}\S+?: )[A-Z][A-Za-z]+?\b/gm) as any;
     if (match !== null) {
-      code = `import {${R.without([model.name], R.uniq(match)).join(
-        ', '
-      )}} from './index';\n\n${code}`;
+      const imports = R.without([model.name], R.uniq(match))
+        .map(name => `import ${name} from './${name}';`)
+        .join('\n');
+      code = `${imports}\n\n${code}`;
     }
 
     fs.writeFileSync(path.join(outputDir, `${model.name}.ts`), code);
