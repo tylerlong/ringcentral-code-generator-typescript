@@ -202,7 +202,7 @@ export default Index;
 `;
 
     // imports
-    code = `import {RingCentral} from '${Array(item.paths.length + 1)
+    code = `import RingCentral from '${Array(item.paths.length + 1)
       .fill('..')
       .join('/')}';\n\n${code}`;
     if (item.paths.length > 1) {
