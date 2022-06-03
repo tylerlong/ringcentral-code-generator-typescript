@@ -45,14 +45,14 @@ const generate = (paths: Path[], outputDir: string) => {
   ): string => {
     const result = ['rc: RingCentralInterface;'];
     if (parentPaths.length > 0) {
-      result.push('parent: Parent;');
+      result.push('parent: ParentInterface;');
     }
     if (parameter) {
       result.push(`${parameter}: string | null;`);
     }
     if (parentPaths.length > 0) {
       result.push(
-        `\n  constructor(parent: Parent${
+        `\n  constructor(parent: ParentInterface${
           parameter
             ? `, ${parameter}: string | null = ${
                 defaultValue ? `'${defaultValue}'` : null
@@ -202,12 +202,11 @@ export default Index;
 `;
 
     // imports
-    code = `import { RingCentralInterface } from '${Array(item.paths.length + 1)
+    code = `import { RingCentralInterface, ParentInterface } from '${Array(
+      item.paths.length + 1
+    )
       .fill('..')
       .join('/')}/interfaces';\n\n${code}`;
-    if (item.paths.length > 1) {
-      code = `import Parent from '..';\n${code}`;
-    }
     const definitionsUsed = new Set();
     for (const operation of item.operations) {
       if (operation.bodyParameters) {
