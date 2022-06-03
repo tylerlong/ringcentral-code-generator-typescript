@@ -206,6 +206,9 @@ export default Index;
     if (item.paths.length > 1) {
       temp += ', ParentInterface';
     }
+    if (item.operations.length > 0) {
+      temp += ', RestRequestConfig';
+    }
     code = `import { ${temp} } from '${Array(item.paths.length + 1)
       .fill('..')
       .join('/')}/interfaces';\n\n${code}`;
@@ -227,11 +230,6 @@ export default Index;
       )
         .fill('..')
         .join('/')}/definitions';\n${code}`;
-    }
-    if (item.operations.length > 0) {
-      code = `import {RestRequestConfig} from '${Array(item.paths.length + 1)
-        .fill('..')
-        .join('/')}/Rest';\n${code}`;
     }
     if (code.indexOf('Utils.') !== -1) {
       code = `import Utils from '${Array(item.paths.length + 1)
