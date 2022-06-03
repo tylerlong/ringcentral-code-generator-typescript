@@ -211,7 +211,7 @@ export default Index;
     }
     code = `import { ${temp} } from '${Array(item.paths.length + 1)
       .fill('..')
-      .join('/')}/interfaces';\n\n${code}`;
+      .join('/')}/types';\n\n${code}`;
     const definitionsUsed = new Set();
     for (const operation of item.operations) {
       if (operation.bodyParameters) {
@@ -224,12 +224,10 @@ export default Index;
         definitionsUsed.add(operation.responseSchema.$ref);
       }
     }
-    if (definitionsUsed.size > 0) {
-      code = `import {${Array.from(definitionsUsed).join(', ')}} from '${Array(
-        item.paths.length + 1
-      )
+    for (const definitionUsed of definitionsUsed) {
+      code = `import ${definitionUsed} from '${Array(item.paths.length + 1)
         .fill('..')
-        .join('/')}/definitions';\n${code}`;
+        .join('/')}/definitions/${definitionUsed}';\n${code}`;
     }
     if (code.indexOf('Utils.') !== -1) {
       code = `import Utils from '${Array(item.paths.length + 1)
