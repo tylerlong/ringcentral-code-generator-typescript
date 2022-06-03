@@ -43,7 +43,7 @@ const generate = (paths: Path[], outputDir: string) => {
     defaultValue: string | undefined,
     parentPaths: string[]
   ): string => {
-    const result = ['rc: RingCentral;'];
+    const result = ['rc: RingCentralInterface;'];
     if (parentPaths.length > 0) {
       result.push('parent: Parent;');
     }
@@ -64,7 +64,7 @@ const generate = (paths: Path[], outputDir: string) => {
       result.push('  this.rc = parent.rc;');
     } else {
       result.push(
-        `\n  constructor(rc: RingCentral${
+        `\n  constructor(rc: RingCentralInterface${
           parameter
             ? `, ${parameter}: string | null = ${
                 defaultValue ? `'${defaultValue}'` : null
@@ -202,9 +202,9 @@ export default Index;
 `;
 
     // imports
-    code = `import RingCentral from '${Array(item.paths.length + 1)
+    code = `import { RingCentralInterface } from '${Array(item.paths.length + 1)
       .fill('..')
-      .join('/')}';\n\n${code}`;
+      .join('/')}/interfaces';\n\n${code}`;
     if (item.paths.length > 1) {
       code = `import Parent from '..';\n${code}`;
     }
