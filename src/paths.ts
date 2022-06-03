@@ -202,9 +202,11 @@ export default Index;
 `;
 
     // imports
-    code = `import { RingCentralInterface, ParentInterface } from '${Array(
-      item.paths.length + 1
-    )
+    let temp = 'RingCentralInterface';
+    if (item.paths.length > 1) {
+      temp += ', ParentInterface';
+    }
+    code = `import { ${temp} } from '${Array(item.paths.length + 1)
       .fill('..')
       .join('/')}/interfaces';\n\n${code}`;
     const definitionsUsed = new Set();
