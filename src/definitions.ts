@@ -76,7 +76,7 @@ const generate = (models: Model[], outputDir: string) => {
             .map(line => ' * ' + line)
             .join('\n')}\n*/\n`
         : ''
-    }class ${model.name} {
+    }interface ${model.name} {
     ${model.fields.map(f => generateField(f)).join('\n\n  ')}
 }
 
@@ -84,7 +84,7 @@ export default ${model.name};
 `;
 
     // imports
-    const match = code.match(/(?<=^ {2}\S+?: )[A-Z][A-Za-z]+?\b/gm) as any;
+    const match = code.match(/(?<=^ {2}\S+?: )[A-Z][A-Za-z]+?\b/gm);
     if (match !== null) {
       const imports = R.without([model.name], R.uniq(match))
         .map(name => `import ${name} from './${name}';`)
