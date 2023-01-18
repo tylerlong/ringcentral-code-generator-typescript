@@ -171,7 +171,7 @@ const generate = (paths: Path[], outputDir: string) => {
 `;
     }
     if (operation.multipart) {
-      result += `const formData = Utils.getFormData(${operation.bodyParameters});\n`;
+      result += `const formData = await Utils.getFormData(${operation.bodyParameters});\n`;
     }
     result += `    const r = await this.rc.${
       operation.method

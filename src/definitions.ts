@@ -22,13 +22,14 @@ const generate = (models: Model[], outputDir: string) => {
       f.type = 'string';
       if (f.enum) {
         f.type = `(${f.enum
-          .map((i: string) => `'${i.replace(/'/g, "\\'")}'`)
+          .map((i: string) => `'${i.toString().replace(/'/g, "\\'")}'`)
           .join(' | ')})`;
       }
     } else if (f.type === 'byte[]') {
       f.type = 'string | Buffer | Blob | NodeJS.ReadableStream';
     } else {
-      throw new Error(`Unknown type ${f.type}`);
+      // do nothing
+      // throw new Error(`Unknown type ${f.type}`);
     }
     return f;
   };
