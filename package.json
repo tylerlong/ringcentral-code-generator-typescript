@@ -1,6 +1,6 @@
 {
   "name": "ringcentral-code-generator",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "license": "MIT",
   "main": "build/index.js",
   "scripts": {
@@ -9,19 +9,19 @@
   },
   "dependencies": {
     "@types/js-yaml": "^4.0.5",
-    "@types/ramda": "^0.28.21",
+    "@types/ramda": "^0.28.24",
     "change-case": "^4.1.2",
     "js-yaml": "^4.1.0",
     "openapi-types": "^12.1.0",
-    "ramda": "^0.28.0",
-    "ringcentral-open-api-parser": "^0.8.10"
+    "ramda": "^0.29.0",
+    "ringcentral-open-api-parser": "^0.10.0"
   },
   "devDependencies": {
-    "@types/node": "^18.11.18",
+    "@types/node": "^18.15.11",
     "dotenv-override-true": "^6.2.2",
     "gts": "^3.1.1",
     "ts-node": "^10.9.1",
-    "typescript": "^4.9.4",
+    "typescript": "^5.0.4",
     "yarn-upgrade-all": "^0.7.2"
   }
 }

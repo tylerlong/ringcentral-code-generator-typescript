@@ -52,7 +52,7 @@ const generate = (paths: Path[], outputDir: string) => {
       markdown.push(
         'const rc = new RingCentral({clientId, clientSecret, serverURL});'
       );
-      markdown.push('await rc.authorize({username, extension, password});');
+      markdown.push('await rc.authorize({jwt});');
       markdown.push(
         `var result = await rc${buildPath(operation.endpoint)}.${
           operation.method2
