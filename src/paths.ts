@@ -128,11 +128,15 @@ const generate = (paths: Path[], outputDir: string) => {
     // methodParams
     const methodParams: string[] = [];
     if (operation.bodyParameters) {
-      methodParams.push(
-        `${operation.bodyParameters}: ${capitalizeFirstLetter(
-          operation.bodyParameters
-        )}`
-      );
+      if (operation.bodyType) {
+        methodParams.push(`${operation.bodyParameters}: ${operation.bodyType}`);
+      } else {
+        methodParams.push(
+          `${operation.bodyParameters}: ${capitalizeFirstLetter(
+            operation.bodyParameters
+          )}`
+        );
+      }
     }
     if (operation.queryParameters) {
       methodParams.push(
@@ -214,7 +218,7 @@ export default Index;
       .join('/')}/types';\n\n${code}`;
     const definitionsUsed = new Set();
     for (const operation of item.operations) {
-      if (operation.bodyParameters) {
+      if (operation.bodyParameters && !operation.bodyType) {
         definitionsUsed.add(capitalizeFirstLetter(operation.bodyParameters));
       }
       if (operation.queryParameters) {
