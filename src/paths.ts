@@ -15,7 +15,8 @@ const generate = (paths: Path[], outputDir: string) => {
   const generatePathMethod = (
     parameter: string | undefined,
     token: string,
-    hasParent: boolean
+    hasParent: boolean,
+    noParentParameter: boolean
   ): string => {
     if (parameter) {
       return `public path(withParameter = true): string {
@@ -29,11 +30,18 @@ const generate = (paths: Path[], outputDir: string) => {
       };
   }`;
     } else {
-      return `public path(): string {
-    return ${hasParent ? '`${this.parent.path()}' : "'"}/${token.replace(
-        'dotSearch',
-        '.search'
-      )}${hasParent ? '`' : "'"};
+      let parentPath = '';
+      if (hasParent) {
+        if (noParentParameter) {
+          parentPath = '{parent.Path(false)}';
+        } else {
+          parentPath = '{parent.Path()}';
+        }
+      }
+      return `public path(withParameter = false): string {
+    return ${parentPath}/${token.replace('dotSearch', '.search')}${
+        hasParent ? '`' : "'"
+      };
   }`;
     }
   };
@@ -196,7 +204,8 @@ const generate = (paths: Path[], outputDir: string) => {
   ${generatePathMethod(
     item.parameter,
     R.last(item.paths)!,
-    itemPaths.length > 1
+    itemPaths.length > 1,
+    item.noParentParameter === true
   )}
 ${item.operations
   .map(operation => generateOperationMethod(operation, item.parameter))
