@@ -18,7 +18,7 @@ const generate = (paths: Path[], outputDir: string) => {
     hasParent: boolean
   ): string => {
     if (parameter) {
-      return `path(withParameter = true): string {
+      return `public path(withParameter = true): string {
     if (withParameter && this.${parameter} !== null) {
         return \`${
           hasParent ? '${this.parent.path()}' : ''
@@ -29,7 +29,7 @@ const generate = (paths: Path[], outputDir: string) => {
       };
   }`;
     } else {
-      return `path(): string {
+      return `public path(): string {
     return ${hasParent ? '`${this.parent.path()}' : "'"}/${token.replace(
         'dotSearch',
         '.search'
@@ -43,16 +43,16 @@ const generate = (paths: Path[], outputDir: string) => {
     defaultValue: string | undefined,
     parentPaths: string[]
   ): string => {
-    const result = ['rc: RingCentralInterface;'];
+    const result = ['public rc: RingCentralInterface;'];
     if (parentPaths.length > 0) {
-      result.push('parent: ParentInterface;');
+      result.push('public parent: ParentInterface;');
     }
     if (parameter) {
-      result.push(`${parameter}: string | null;`);
+      result.push(`public ${parameter}: string | null;`);
     }
     if (parentPaths.length > 0) {
       result.push(
-        `\n  constructor(parent: ParentInterface${
+        `\n  public constructor(parent: ParentInterface${
           parameter
             ? `, ${parameter}: string | null = ${
                 defaultValue ? `'${defaultValue}'` : null
@@ -64,7 +64,7 @@ const generate = (paths: Path[], outputDir: string) => {
       result.push('  this.rc = parent.rc;');
     } else {
       result.push(
-        `\n  constructor(rc: RingCentralInterface${
+        `\n  public constructor(rc: RingCentralInterface${
           parameter
             ? `, ${parameter}: string | null = ${
                 defaultValue ? `'${defaultValue}'` : null
@@ -164,7 +164,7 @@ const generate = (paths: Path[], outputDir: string) => {
 
     // result
     result += `
-  async ${operation.method2}(${methodParams.join(
+  public async ${operation.method2}(${methodParams.join(
       ', '
     )}): Promise<${responseType}> {\n`;
     if (operation.withParameter) {
@@ -257,7 +257,7 @@ export default Index;
           )}';`,
         ],
         `
-  ${camelCase(R.last(item.paths)!)}(${
+  public ${camelCase(R.last(item.paths)!)}(${
           item.parameter
             ? `${item.parameter}: (string | null) = ${
                 item.defaultParameter ? `'${item.defaultParameter}'` : 'null'
