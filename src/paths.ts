@@ -22,10 +22,10 @@ const generate = (paths: Path[], outputDir: string) => {
       return `public path(withParameter = true): string {
     if (withParameter && this.${parameter} !== null) {
         return \`${
-          hasParent ? '${this.parent.path()}' : ''
+          hasParent ? '${this._parent.path()}' : ''
         }/${token}/\${this.${parameter}}\`;
     }
-    return ${hasParent ? '`${this.parent.path()}' : "'"}/${token}${
+    return ${hasParent ? '`${this._parent.path()}' : "'"}/${token}${
         hasParent ? '`' : "'"
       };
   }`;
@@ -33,15 +33,16 @@ const generate = (paths: Path[], outputDir: string) => {
       let parentPath = '';
       if (hasParent) {
         if (noParentParameter) {
-          parentPath = '{parent.Path(false)}';
+          parentPath = '${this._parent.path(false)}';
         } else {
-          parentPath = '{parent.Path()}';
+          parentPath = '${this._parent.path()}';
         }
       }
       return `public path(withParameter = false): string {
-    return ${parentPath}/${token.replace('dotSearch', '.search')}${
-        hasParent ? '`' : "'"
-      };
+    return ${hasParent ? '`' : "'"}${parentPath}/${token.replace(
+        'dotSearch',
+        '.search'
+      )}${hasParent ? '`' : "'"};
   }`;
     }
   };
@@ -53,14 +54,14 @@ const generate = (paths: Path[], outputDir: string) => {
   ): string => {
     const result = ['public rc: RingCentralInterface;'];
     if (parentPaths.length > 0) {
-      result.push('public parent: ParentInterface;');
+      result.push('public _parent: ParentInterface;');
     }
     if (parameter) {
       result.push(`public ${parameter}: string | null;`);
     }
     if (parentPaths.length > 0) {
       result.push(
-        `\n  public constructor(parent: ParentInterface${
+        `\n  public constructor(_parent: ParentInterface${
           parameter
             ? `, ${parameter}: string | null = ${
                 defaultValue ? `'${defaultValue}'` : null
@@ -68,8 +69,8 @@ const generate = (paths: Path[], outputDir: string) => {
             : ''
         }) {`
       );
-      result.push('  this.parent = parent;');
-      result.push('  this.rc = parent.rc;');
+      result.push('  this._parent = _parent;');
+      result.push('  this.rc = _parent.rc;');
     } else {
       result.push(
         `\n  public constructor(rc: RingCentralInterface${
