@@ -26,8 +26,8 @@ const generate = (paths: Path[], outputDir: string) => {
         }/${token}/\${this.${parameter}}\`;
     }
     return ${hasParent ? '`${this._parent.path()}' : "'"}/${token}${
-        hasParent ? '`' : "'"
-      };
+      hasParent ? '`' : "'"
+    };
   }`;
     } else {
       let parentPath = '';
@@ -38,11 +38,11 @@ const generate = (paths: Path[], outputDir: string) => {
           parentPath = '${this._parent.path()}';
         }
       }
-      return `public path(withParameter = false): string {
+      return `public path(): string {
     return ${hasParent ? '`' : "'"}${parentPath}/${token.replace(
-        'dotSearch',
-        '.search'
-      )}${hasParent ? '`' : "'"};
+      'dotSearch',
+      '.search'
+    )}${hasParent ? '`' : "'"};
   }`;
     }
   };
@@ -174,8 +174,8 @@ const generate = (paths: Path[], outputDir: string) => {
     // result
     result += `
   public async ${operation.method2}(${methodParams.join(
-      ', '
-    )}): Promise<${responseType}> {\n`;
+    ', '
+  )}): Promise<${responseType}> {\n`;
     if (operation.withParameter) {
       result += `    if (this.${parameter} === null)
     {
@@ -268,15 +268,15 @@ export default Index;
         ],
         `
   public ${camelCase(R.last(item.paths)!)}(${
-          item.parameter
-            ? `${item.parameter}: (string | null) = ${
-                item.defaultParameter ? `'${item.defaultParameter}'` : 'null'
-              }`
-            : ''
-        }): ${pascalCase(R.last(item.paths)!)} {
+    item.parameter
+      ? `${item.parameter}: (string | null) = ${
+          item.defaultParameter ? `'${item.defaultParameter}'` : 'null'
+        }`
+      : ''
+  }): ${pascalCase(R.last(item.paths)!)} {
     return new ${pascalCase(R.last(item.paths)!)}(this${
-          item.parameter ? `, ${item.parameter}` : ''
-        });
+      item.parameter ? `, ${item.parameter}` : ''
+    });
   }
   `.trim()
       );
