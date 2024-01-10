@@ -164,7 +164,7 @@ const generate = (paths: Path[], outputDir: string) => {
     } else if (operation.bodyParameters) {
       requestParams.push(operation.bodyParameters);
     } else if (operation.method !== 'get') {
-      requestParams.push('undefined');
+      requestParams.push('{}');
     }
     requestParams.push(operation.queryParameters ? 'queryParams' : 'undefined');
     if (responseType === 'Buffer') {
