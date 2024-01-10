@@ -163,6 +163,8 @@ const generate = (paths: Path[], outputDir: string) => {
       requestParams.push('formData');
     } else if (operation.bodyParameters) {
       requestParams.push(operation.bodyParameters);
+    } else if (operation.method !== 'get') {
+      requestParams.push('undefined');
     }
     requestParams.push(operation.queryParameters ? 'queryParams' : 'undefined');
     if (responseType === 'Buffer') {
