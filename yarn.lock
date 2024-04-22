@@ -170,10 +170,10 @@
   resolved "https://registry.yarnpkg.com/@types/minimist/-/minimist-1.2.2.tgz#ee771e2ba4b3dc5b372935d549fd9617bf345b8c"
   integrity sha512-jhuKLIRrhvCPLqwPcx6INqmKeiA5EWrsCOPhrlFSrbrmU4ZMPjj5Ul/oLCMDO98XRUIwVm78xICz4EPCektzeQ==
 
-"@types/node@^20.12.5":
-  version "20.12.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.5.tgz#74c4f31ab17955d0b5808cdc8fd2839526ad00b3"
-  integrity sha512-BD+BjQ9LS/D8ST9p5uqBxghlN+S42iuNxjsUGjeZobe/ciXzk2qb1B6IXc6AnRLS+yFJRpN2IPEHMzwspfDJNw==
+"@types/node@^20.12.7":
+  version "20.12.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.12.7.tgz#04080362fa3dd6c5822061aa3124f5c152cff384"
+  integrity sha512-wq0cICSkRLVaf3UGLMGItu/PtdY7oaXaI/RVU+xliKVOtRna3PRY57ZDfztpDL0n11vfymMUnXv8QwYCO7L1wg==
   dependencies:
     undici-types "~5.26.4"
 
@@ -1597,10 +1597,10 @@ rimraf@3.0.2, rimraf@^3.0.2:
   dependencies:
     glob "^7.1.3"
 
-ringcentral-open-api-parser@^0.14.2:
-  version "0.14.2"
-  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.14.2.tgz#0c06e993cf032fd5a0fcfc0ad7a5558510b9a5fb"
-  integrity sha512-1v0YtEP6ftui4wY5UlqtkBkmEGsEd+2IACzWCPlhwStdTZbiQqQ/+BzDDTj1bn5lVvNwR+6jcwOm6KHMznxbNQ==
+ringcentral-open-api-parser@^0.14.3:
+  version "0.14.3"
+  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.14.3.tgz#90671fe7271d4a06d6e41263af7e7d515a825304"
+  integrity sha512-HypeMevVdJV25SzzmuFGaiMF9HGkbzTHMV9bXul88sUW6V6DhW4C8XKfnWgC+4mkhnc886tHk5foBukNS/8BIg==
   dependencies:
     js-yaml "^4.1.0"
     lodash "^4.17.21"
@@ -1888,10 +1888,10 @@ types-ramda@^0.29.10:
   dependencies:
     ts-toolbelt "^9.6.0"
 
-typescript@^5.4.4:
-  version "5.4.4"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.4.tgz#eb2471e7b0a5f1377523700a21669dce30c2d952"
-  integrity sha512-dGE2Vv8cpVvw28v8HCPqyb08EzbBURxDpuhJvTrusShUfGnhHBafDsLdS1EhhxyL6BJQE+2cT3dDPAv+MQ6oLw==
+typescript@^5.4.5:
+  version "5.4.5"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.4.5.tgz#42ccef2c571fdbd0f6718b1d1f5e6e5ef006f611"
+  integrity sha512-vcI4UpRgg81oIRUFwR0WSIHKt11nJ7SAVlYNIu+QpqeyXP+gpQJy/Z4+F0aGxSE4MqwjyXvW/TzgkLAx2AGHwQ==
 
 undici-types@~5.26.4:
   version "5.26.5"
