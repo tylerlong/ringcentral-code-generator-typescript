@@ -50,7 +50,7 @@ const generate = (paths: Path[], outputDir: string) => {
 
       markdown.push('\n```ts');
       markdown.push(
-        'const rc = new RingCentral({clientId, clientSecret, serverURL});'
+        'const rc = new RingCentral({clientId, clientSecret, server});'
       );
       markdown.push('await rc.authorize({jwt});');
       markdown.push(
