@@ -17,7 +17,7 @@
     "ringcentral-open-api-parser": "^0.15.3"
   },
   "devDependencies": {
-    "@types/node": "^22.10.7",
+    "@types/node": "^22.10.10",
     "dotenv-override-true": "^6.2.2",
     "gts": "^6.0.2",
     "ts-node": "^10.9.2",

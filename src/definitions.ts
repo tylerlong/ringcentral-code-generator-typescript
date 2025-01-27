@@ -92,7 +92,7 @@ export default ${model.name};
     const match = code.match(/(?<=^ {2}\S+?: )[A-Z][A-Za-z0-9]+?\b/gm);
     if (match !== null) {
       const imports = R.without([model.name], R.uniq(match))
-        .map((name) => `import ${name} from './${name}';`)
+        .map((name) => `import ${name} from "./${name}.js";`)
         .join("\n");
       code = `${imports}\n\n${code}`;
     }

@@ -245,7 +245,7 @@ export default Index;
       Array(item.paths.length + 1)
         .fill("..")
         .join("/")
-    }/types';\n\n${code}`;
+    }/types.js';\n\n${code}`;
     const definitionsUsed = new Set();
     for (const operation of item.operations) {
       if (operation.bodyParameters && !operation.bodyType) {
@@ -259,18 +259,18 @@ export default Index;
       }
     }
     for (const definitionUsed of definitionsUsed) {
-      code = `import ${definitionUsed} from '${
+      code = `import ${definitionUsed} from "${
         Array(item.paths.length + 1)
           .fill("..")
           .join("/")
-      }/definitions/${definitionUsed}';\n${code}`;
+      }/definitions/${definitionUsed}.js";\n${code}`;
     }
     if (code.indexOf("Utils.") !== -1) {
       code = `import Utils from '${
         Array(item.paths.length + 1)
           .fill("..")
           .join("/")
-      }/Utils';\n${code}`;
+      }/Utils.js';\n${code}`;
     }
 
     const folder = path.join(outputDir, ...itemPaths);
@@ -290,7 +290,7 @@ export default Index;
             pascalCase(
               R.last(item.paths)!,
             )
-          }';`,
+          }/index.js';`,
         ],
         `
   public ${camelCase(R.last(item.paths)!)}(${
