@@ -1,32 +1,34 @@
-import path from 'path';
-import {spawnSync} from 'child_process';
-import {Field, Model} from 'ringcentral-open-api-parser/lib/types';
-import R from 'ramda';
-import fs from 'fs';
+import path from "path";
+import { spawnSync } from "child_process";
+import { Field, Model } from "ringcentral-open-api-parser/lib/types";
+import R from "ramda";
+import fs from "fs";
 
 const generate = (models: Model[], outputDir: string) => {
-  outputDir = path.join(outputDir, 'definitions');
-  spawnSync('rm', ['-rf', outputDir]);
-  spawnSync('mkdir', [outputDir]);
+  outputDir = path.join(outputDir, "definitions");
+  spawnSync("rm", ["-rf", outputDir]);
+  spawnSync("mkdir", [outputDir]);
 
   const normalizeField = (f: Field): Field => {
     if (f.$ref) {
       f.type = f.$ref;
-    } else if (f.type === 'integer' || f.type === 'number') {
-      f.type = 'number';
-    } else if (f.type === 'array') {
+    } else if (f.type === "integer" || f.type === "number") {
+      f.type = "number";
+    } else if (f.type === "array") {
       f.type = `${normalizeField(f.items!).type}[]`;
-    } else if (f.type === 'boolean') {
-      f.type = 'boolean';
-    } else if (f.type === 'string') {
-      f.type = 'string';
+    } else if (f.type === "boolean") {
+      f.type = "boolean";
+    } else if (f.type === "string") {
+      f.type = "string";
       if (f.enum) {
-        f.type = `(${f.enum
-          .map((i: string) => `'${i.toString().replace(/'/g, "\\'")}'`)
-          .join(' | ')})`;
+        f.type = `(${
+          f.enum
+            .map((i: string) => `'${i.toString().replace(/'/g, "\\'")}'`)
+            .join(" | ")
+        })`;
       }
-    } else if (f.type === 'byte[]') {
-      f.type = 'string | Buffer | Blob | NodeJS.ReadableStream';
+    } else if (f.type === "byte[]") {
+      f.type = "string | Buffer | Blob | NodeJS.ReadableStream";
     } else {
       // do nothing
       // throw new Error(`Unknown type ${f.type}`);
@@ -36,8 +38,8 @@ const generate = (models: Model[], outputDir: string) => {
 
   const generateField = (f: Field) => {
     f = normalizeField(f);
-    let p = '';
-    if (f.name.includes('-') || f.name.includes(':') || f.name.includes('.')) {
+    let p = "";
+    if (f.name.includes("-") || f.name.includes(":") || f.name.includes(".")) {
       p = `'${f.name}'?: ${f.type};`;
     } else {
       p = `${f.name}?: ${f.type};`;
@@ -63,22 +65,24 @@ const generate = (models: Model[], outputDir: string) => {
       p = ` * Required\n  ${p}`;
     }
     if (f.description) {
-      p = ` * ${f.description.trim().split('\n').join('\n *  ')}\n  ${p}`;
+      p = ` * ${f.description.trim().split("\n").join("\n *  ")}\n  ${p}`;
     }
     p = `/**\n  ${p}`;
     return p;
   };
 
-  models.forEach(model => {
+  models.forEach((model) => {
     let code = `${
       model.description
-        ? `/**\n${model.description
-            .split('\n')
-            .map(line => ' * ' + line)
-            .join('\n')}\n*/\n`
-        : ''
+        ? `/**\n${
+          model.description
+            .split("\n")
+            .map((line) => " * " + line)
+            .join("\n")
+        }\n*/\n`
+        : ""
     }interface ${model.name} {
-    ${model.fields.map(f => generateField(f)).join('\n\n  ')}
+    ${model.fields.map((f) => generateField(f)).join("\n\n  ")}
 }
 
 export default ${model.name};
@@ -88,8 +92,8 @@ export default ${model.name};
     const match = code.match(/(?<=^ {2}\S+?: )[A-Z][A-Za-z0-9]+?\b/gm);
     if (match !== null) {
       const imports = R.without([model.name], R.uniq(match))
-        .map(name => `import ${name} from './${name}';`)
-        .join('\n');
+        .map((name) => `import ${name} from './${name}';`)
+        .join("\n");
       code = `${imports}\n\n${code}`;
     }
 

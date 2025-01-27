@@ -1,8 +1,8 @@
-import {prepareSpec} from 'ringcentral-open-api-parser';
+import { prepareSpec } from "ringcentral-open-api-parser";
 
-import generateDefinitions from './definitions';
-import generatePaths from './paths';
-import generateSamples from './samples';
+import generateDefinitions from "./definitions";
+import generatePaths from "./paths";
+import generateSamples from "./samples";
 
 const generate = (specFilePath: string, outputFolderPath: string) => {
   const parsed = prepareSpec(specFilePath);

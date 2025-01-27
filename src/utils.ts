@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from "fs";
 
 export const capitalizeFirstLetter = (s: string): string => {
   return s.charAt(0).toUpperCase() + s.slice(1);
@@ -7,11 +7,11 @@ export const capitalizeFirstLetter = (s: string): string => {
 export const patchSrcFile = (
   filePath: string,
   imports: any,
-  extensions: any
+  extensions: any,
 ) => {
-  let code = fs.readFileSync(filePath, 'utf8');
+  let code = fs.readFileSync(filePath, "utf8");
   if (imports && imports.length > 0) {
-    code = `${imports.join('\n')}\n${code}`;
+    code = `${imports.join("\n")}\n${code}`;
   }
   if (extensions) {
     code = code.replace(/^}/m, `\n  ${extensions}\n}`);

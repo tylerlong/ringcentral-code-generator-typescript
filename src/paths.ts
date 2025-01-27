@@ -1,48 +1,50 @@
-import fs from 'fs';
-import path from 'path';
-import {spawnSync} from 'child_process';
-import {Operation, Path} from 'ringcentral-open-api-parser/lib/types';
-import {pascalCase, capitalCase, camelCase} from 'change-case';
-import R from 'ramda';
+import fs from "fs";
+import path from "path";
+import { spawnSync } from "child_process";
+import { Operation, Path } from "ringcentral-open-api-parser/lib/types";
+import { camelCase, capitalCase, pascalCase } from "change-case";
+import R from "ramda";
 
-import {capitalizeFirstLetter, patchSrcFile} from './utils';
+import { capitalizeFirstLetter, patchSrcFile } from "./utils";
 
 const generate = (paths: Path[], outputDir: string) => {
-  outputDir = path.join(outputDir, 'paths');
-  spawnSync('rm', ['-rf', outputDir]);
-  spawnSync('mkdir', [outputDir]);
+  outputDir = path.join(outputDir, "paths");
+  spawnSync("rm", ["-rf", outputDir]);
+  spawnSync("mkdir", [outputDir]);
 
   const generatePathMethod = (
     parameter: string | undefined,
     token: string,
     hasParent: boolean,
-    noParentParameter: boolean
+    noParentParameter: boolean,
   ): string => {
     if (parameter) {
       return `public path(withParameter = true): string {
     if (withParameter && this.${parameter} !== null) {
         return \`${
-          hasParent ? '${this._parent.path()}' : ''
-        }/${token}/\${this.${parameter}}\`;
+        hasParent ? "${this._parent.path()}" : ""
+      }/${token}/\${this.${parameter}}\`;
     }
-    return ${hasParent ? '`${this._parent.path()}' : "'"}/${token}${
-      hasParent ? '`' : "'"
-    };
+    return ${hasParent ? "`${this._parent.path()}" : "'"}/${token}${
+        hasParent ? "`" : "'"
+      };
   }`;
     } else {
-      let parentPath = '';
+      let parentPath = "";
       if (hasParent) {
         if (noParentParameter) {
-          parentPath = '${this._parent.path(false)}';
+          parentPath = "${this._parent.path(false)}";
         } else {
-          parentPath = '${this._parent.path()}';
+          parentPath = "${this._parent.path()}";
         }
       }
       return `public path(): string {
-    return ${hasParent ? '`' : "'"}${parentPath}/${token.replace(
-      'dotSearch',
-      '.search'
-    )}${hasParent ? '`' : "'"};
+    return ${hasParent ? "`" : "'"}${parentPath}/${
+        token.replace(
+          "dotSearch",
+          ".search",
+        )
+      }${hasParent ? "`" : "'"};
   }`;
     }
   };
@@ -50,11 +52,11 @@ const generate = (paths: Path[], outputDir: string) => {
   const generateConstructor = (
     parameter: string | undefined,
     defaultValue: string | undefined,
-    parentPaths: string[]
+    parentPaths: string[],
   ): string => {
-    const result = ['public rc: RingCentralInterface;'];
+    const result = ["public rc: RingCentralInterface;"];
     if (parentPaths.length > 0) {
-      result.push('public _parent: ParentInterface;');
+      result.push("public _parent: ParentInterface;");
     }
     if (parameter) {
       result.push(`public ${parameter}: string | null;`);
@@ -64,48 +66,50 @@ const generate = (paths: Path[], outputDir: string) => {
         `\n  public constructor(_parent: ParentInterface${
           parameter
             ? `, ${parameter}: string | null = ${
-                defaultValue ? `'${defaultValue}'` : null
-              }`
-            : ''
-        }) {`
+              defaultValue ? `'${defaultValue}'` : null
+            }`
+            : ""
+        }) {`,
       );
-      result.push('  this._parent = _parent;');
-      result.push('  this.rc = _parent.rc;');
+      result.push("  this._parent = _parent;");
+      result.push("  this.rc = _parent.rc;");
     } else {
       result.push(
         `\n  public constructor(rc: RingCentralInterface${
           parameter
             ? `, ${parameter}: string | null = ${
-                defaultValue ? `'${defaultValue}'` : null
-              }`
-            : ''
-        }) {`
+              defaultValue ? `'${defaultValue}'` : null
+            }`
+            : ""
+        }) {`,
       );
-      result.push('  this.rc = rc;');
+      result.push("  this.rc = rc;");
     }
     if (parameter) {
       result.push(`  this.${parameter} = ${parameter};`);
     }
-    result.push('}');
+    result.push("}");
 
-    return result.join('\n  ');
+    return result.join("\n  ");
   };
 
   const generateOperationMethod = (
     operation: Operation,
-    parameter: string | undefined
+    parameter: string | undefined,
   ): string => {
     // comments
-    const comments = ['/**'];
+    const comments = ["/**"];
     comments.push(
-      `${(
-        operation.description ||
-        operation.summary ||
-        capitalCase(operation.operationId)
-      )
-        .split('\n')
-        .map(l => ` * ${l}`)
-        .join('\n')}`
+      `${
+        (
+          operation.description ||
+          operation.summary ||
+          capitalCase(operation.operationId)
+        )
+          .split("\n")
+          .map((l) => ` * ${l}`)
+          .join("\n")
+      }`,
     );
     comments.push(` * HTTP Method: ${operation.method}`);
     comments.push(` * Endpoint: ${operation.endpoint}`);
@@ -118,17 +122,17 @@ const generate = (paths: Path[], outputDir: string) => {
     if (operation.userPermission) {
       comments.push(` * User Permission: ${operation.userPermission}`);
     }
-    comments.push(' */');
-    let result = comments.map(l => `  ${l}`).join('\n');
+    comments.push(" */");
+    let result = comments.map((l) => `  ${l}`).join("\n");
 
     // responseType
-    let responseType = 'string';
+    let responseType = "string";
     if (operation.responseSchema) {
       if (
-        operation.responseSchema.type === 'string' &&
-        operation.responseSchema.format === 'binary'
+        operation.responseSchema.type === "string" &&
+        operation.responseSchema.format === "binary"
       ) {
-        responseType = 'Buffer';
+        responseType = "Buffer";
       } else if (operation.responseSchema.$ref) {
         responseType = operation.responseSchema.$ref;
       }
@@ -141,43 +145,47 @@ const generate = (paths: Path[], outputDir: string) => {
         methodParams.push(`${operation.bodyParameters}: ${operation.bodyType}`);
       } else {
         methodParams.push(
-          `${operation.bodyParameters}: ${capitalizeFirstLetter(
-            operation.bodyParameters
-          )}`
+          `${operation.bodyParameters}: ${
+            capitalizeFirstLetter(
+              operation.bodyParameters,
+            )
+          }`,
         );
       }
     }
     if (operation.queryParameters) {
       methodParams.push(
-        `queryParams?: ${capitalizeFirstLetter(operation.queryParameters)}`
+        `queryParams?: ${capitalizeFirstLetter(operation.queryParameters)}`,
       );
     }
-    methodParams.push('restRequestConfig?: RestRequestConfig');
+    methodParams.push("restRequestConfig?: RestRequestConfig");
 
     // requestParams
     const requestParams: string[] = [];
     requestParams.push(
-      `this.path(${!operation.withParameter && parameter ? 'false' : ''})`
+      `this.path(${!operation.withParameter && parameter ? "false" : ""})`,
     );
     if (operation.multipart) {
-      requestParams.push('formData');
+      requestParams.push("formData");
     } else if (operation.bodyParameters) {
       requestParams.push(operation.bodyParameters);
-    } else if (operation.method !== 'get') {
-      requestParams.push('{}');
+    } else if (operation.method !== "get") {
+      requestParams.push("{}");
     }
-    requestParams.push(operation.queryParameters ? 'queryParams' : 'undefined');
-    if (responseType === 'Buffer') {
+    requestParams.push(operation.queryParameters ? "queryParams" : "undefined");
+    if (responseType === "Buffer") {
       requestParams.push("{...restRequestConfig, responseType: 'arraybuffer'}");
     } else {
-      requestParams.push('restRequestConfig');
+      requestParams.push("restRequestConfig");
     }
 
     // result
     result += `
-  public async ${operation.method2}(${methodParams.join(
-    ', '
-  )}): Promise<${responseType}> {\n`;
+  public async ${operation.method2}(${
+      methodParams.join(
+        ", ",
+      )
+    }): Promise<${responseType}> {\n`;
     if (operation.withParameter) {
       result += `    if (this.${parameter} === null)
     {
@@ -186,48 +194,58 @@ const generate = (paths: Path[], outputDir: string) => {
 `;
     }
     if (operation.multipart) {
-      result += `const formData = await Utils.getFormData(${operation.bodyParameters});\n`;
+      result +=
+        `const formData = await Utils.getFormData(${operation.bodyParameters});\n`;
     }
-    result += `    const r = await this.rc.${
-      operation.method
-    }<${responseType}>(${requestParams.join(', ')});
+    result +=
+      `    const r = await this.rc.${operation.method}<${responseType}>(${
+        requestParams.join(", ")
+      });
     return r.data;
   }`;
     return result;
   };
 
   for (const item of paths) {
-    const itemPaths = item.paths.map(p => pascalCase(p));
+    const itemPaths = item.paths.map((p) => pascalCase(p));
     let code = `class Index {
-  ${generateConstructor(
-    item.parameter,
-    item.defaultParameter,
-    R.init(itemPaths)
-  )}
-  ${generatePathMethod(
-    item.parameter,
-    R.last(item.paths)!,
-    itemPaths.length > 1,
-    item.noParentParameter === true
-  )}
-${item.operations
-  .map(operation => generateOperationMethod(operation, item.parameter))
-  .join('\n\n')}
+  ${
+      generateConstructor(
+        item.parameter,
+        item.defaultParameter,
+        R.init(itemPaths),
+      )
+    }
+  ${
+      generatePathMethod(
+        item.parameter,
+        R.last(item.paths)!,
+        itemPaths.length > 1,
+        item.noParentParameter === true,
+      )
+    }
+${
+      item.operations
+        .map((operation) => generateOperationMethod(operation, item.parameter))
+        .join("\n\n")
+    }
 }
 export default Index;
 `;
 
     // imports
-    let temp = 'RingCentralInterface';
+    let temp = "RingCentralInterface";
     if (item.paths.length > 1) {
-      temp += ', ParentInterface';
+      temp += ", ParentInterface";
     }
     if (item.operations.length > 0) {
-      temp += ', RestRequestConfig';
+      temp += ", RestRequestConfig";
     }
-    code = `import { ${temp} } from '${Array(item.paths.length + 1)
-      .fill('..')
-      .join('/')}/types';\n\n${code}`;
+    code = `import { ${temp} } from '${
+      Array(item.paths.length + 1)
+        .fill("..")
+        .join("/")
+    }/types';\n\n${code}`;
     const definitionsUsed = new Set();
     for (const operation of item.operations) {
       if (operation.bodyParameters && !operation.bodyType) {
@@ -241,46 +259,52 @@ export default Index;
       }
     }
     for (const definitionUsed of definitionsUsed) {
-      code = `import ${definitionUsed} from '${Array(item.paths.length + 1)
-        .fill('..')
-        .join('/')}/definitions/${definitionUsed}';\n${code}`;
+      code = `import ${definitionUsed} from '${
+        Array(item.paths.length + 1)
+          .fill("..")
+          .join("/")
+      }/definitions/${definitionUsed}';\n${code}`;
     }
-    if (code.indexOf('Utils.') !== -1) {
-      code = `import Utils from '${Array(item.paths.length + 1)
-        .fill('..')
-        .join('/')}/Utils';\n${code}`;
+    if (code.indexOf("Utils.") !== -1) {
+      code = `import Utils from '${
+        Array(item.paths.length + 1)
+          .fill("..")
+          .join("/")
+      }/Utils';\n${code}`;
     }
 
     const folder = path.join(outputDir, ...itemPaths);
-    fs.mkdirSync(folder, {recursive: true});
-    fs.writeFileSync(path.join(folder, 'index.ts'), code.trim());
+    fs.mkdirSync(folder, { recursive: true });
+    fs.writeFileSync(path.join(folder, "index.ts"), code.trim());
 
     // bridge methods
     if (item.paths.length > 1) {
       patchSrcFile(
         path.join(
           outputDir,
-          ...R.init(item.paths).map(item => pascalCase(item)),
-          'index.ts'
+          ...R.init(item.paths).map((item) => pascalCase(item)),
+          "index.ts",
         ),
         [
-          `import ${pascalCase(R.last(item.paths)!)} from './${pascalCase(
-            R.last(item.paths)!
-          )}';`,
+          `import ${pascalCase(R.last(item.paths)!)} from './${
+            pascalCase(
+              R.last(item.paths)!,
+            )
+          }';`,
         ],
         `
   public ${camelCase(R.last(item.paths)!)}(${
-    item.parameter
-      ? `${item.parameter}: (string | null) = ${
-          item.defaultParameter ? `'${item.defaultParameter}'` : 'null'
-        }`
-      : ''
-  }): ${pascalCase(R.last(item.paths)!)} {
+          item.parameter
+            ? `${item.parameter}: (string | null) = ${
+              item.defaultParameter ? `'${item.defaultParameter}'` : "null"
+            }`
+            : ""
+        }): ${pascalCase(R.last(item.paths)!)} {
     return new ${pascalCase(R.last(item.paths)!)}(this${
-      item.parameter ? `, ${item.parameter}` : ''
-    });
+          item.parameter ? `, ${item.parameter}` : ""
+        });
   }
-  `.trim()
+  `.trim(),
       );
     }
   }
