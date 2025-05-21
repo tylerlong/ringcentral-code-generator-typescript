@@ -255,7 +255,11 @@ export default Index;
         definitionsUsed.add(capitalizeFirstLetter(operation.queryParameters));
       }
       if (operation.responseSchema?.$ref) {
-        definitionsUsed.add(operation.responseSchema.$ref);
+        let temp = operation.responseSchema.$ref;
+        if (temp.endsWith("[]")) {
+          temp = temp.substring(0, temp.length - 2);
+        }
+        definitionsUsed.add(temp);
       }
     }
     for (const definitionUsed of definitionsUsed) {
