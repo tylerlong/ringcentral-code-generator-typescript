@@ -93,8 +93,14 @@ const generate = (paths: Path[], outputDir: string) => {
       }
 
       if (operation.responseSchema?.$ref) {
+        let className = operation.responseSchema.$ref;
+        let isArray = false;
+        if (className.endsWith("[]")) {
+          isArray = true;
+          className = className.slice(0, -2);
+        }
         markdown.push(
-          `- \`result\` is of type [${operation.responseSchema.$ref}](./definitions/${operation.responseSchema.$ref}.ts)`,
+          `- \`result\` is of type [${className}](./definitions/${className}.ts)`,
         );
       } else if (!operation.responseSchema) {
         markdown.push("- `result` is an empty string");
@@ -102,6 +108,8 @@ const generate = (paths: Path[], outputDir: string) => {
         markdown.push("- `result` is of type `byte[]`");
         markdown.push(`\n### ❗❗❗ Code sample above may not work
 \nPlease refer to [Binary content downloading](/README.md#Binary-content-downloading).`);
+      } else if (operation.responseSchema.type === "string") {
+        markdown.push("- `result` is a string");
       } else {
         console.log(operation);
       }
