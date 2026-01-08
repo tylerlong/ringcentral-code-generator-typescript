@@ -54,7 +54,7 @@ const generate = (paths: Path[], outputDir: string) => {
       );
       markdown.push("await rc.authorize({jwt});");
       markdown.push(
-        `var result = await rc${
+        `const result = await rc${
           buildPath(operation.endpoint)
         }.${operation.method2}(${parameters.join(", ")});`,
       );
