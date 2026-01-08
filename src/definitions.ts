@@ -28,7 +28,7 @@ const generate = (models: Model[], outputDir: string) => {
         })`;
       }
     } else if (f.type === "byte[]") {
-      f.type = "string | Buffer | Blob | NodeJS.ReadableStream";
+      f.type = "string | Uint8Array | Blob | AsyncIterable<Uint8Array>";
     } else {
       // do nothing
       // throw new Error(`Unknown type ${f.type}`);

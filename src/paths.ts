@@ -132,7 +132,7 @@ const generate = (paths: Path[], outputDir: string) => {
         operation.responseSchema.type === "string" &&
         operation.responseSchema.format === "binary"
       ) {
-        responseType = "Buffer";
+        responseType = "Uint8Array";
       } else if (operation.responseSchema.$ref) {
         responseType = operation.responseSchema.$ref;
       }
@@ -173,7 +173,7 @@ const generate = (paths: Path[], outputDir: string) => {
       requestParams.push("{}");
     }
     requestParams.push(operation.queryParameters ? "queryParams" : "undefined");
-    if (responseType === "Buffer") {
+    if (responseType === "Uint8Array") {
       requestParams.push("{...restRequestConfig, responseType: 'arraybuffer'}");
     } else {
       requestParams.push("restRequestConfig");
