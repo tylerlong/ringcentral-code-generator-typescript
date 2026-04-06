@@ -6,9 +6,9 @@ export const capitalizeFirstLetter = (s: string): string => {
 
 export const patchSrcFile = (
   filePath: string,
-  imports: any,
-  extensions: any,
-) => {
+  imports?: string[],
+  extensions?: string,
+): void => {
   let code = fs.readFileSync(filePath, "utf8");
   if (imports && imports.length > 0) {
     code = `${imports.join("\n")}\n${code}`;

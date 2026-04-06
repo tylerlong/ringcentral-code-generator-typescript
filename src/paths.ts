@@ -246,7 +246,7 @@ export default Index;
         .fill("..")
         .join("/")
     }/types.js';\n\n${code}`;
-    const definitionsUsed = new Set();
+    const definitionsUsed = new Set<string>();
     for (const operation of item.operations) {
       if (operation.bodyParameters && !operation.bodyType) {
         definitionsUsed.add(capitalizeFirstLetter(operation.bodyParameters));

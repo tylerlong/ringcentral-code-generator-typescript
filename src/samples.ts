@@ -9,7 +9,7 @@ import { capitalizeFirstLetter } from "./utils.js";
 const generate = (paths: Path[], outputDir: string) => {
   const markdown = ["# RingCentral TypeScript Code Samples"];
 
-  paths = R.sortBy(R.path(["operations", 0, "endpoint"]) as any, paths);
+  paths = R.sortBy((item: Path) => item.operations[0]?.endpoint ?? "", paths);
 
   const buildPath = (s: string): string => {
     const tokens = s.split("/").filter((t) => t.length > 0);
@@ -94,9 +94,7 @@ const generate = (paths: Path[], outputDir: string) => {
 
       if (operation.responseSchema?.$ref) {
         let className = operation.responseSchema.$ref;
-        let isArray = false;
         if (className.endsWith("[]")) {
-          isArray = true;
           className = className.slice(0, -2);
         }
         markdown.push(
