@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { spawnSync } from "child_process";
-import { Operation, Path } from "ringcentral-open-api-parser/lib/types";
+import { Operation, Path } from "ringcentral-open-api-parser";
 import { camelCase, capitalCase, pascalCase } from "change-case";
 import R from "ramda";
 

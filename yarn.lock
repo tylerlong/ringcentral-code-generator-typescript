@@ -1557,10 +1557,10 @@ restore-cursor@^3.1.0:
     onetime "^5.1.0"
     signal-exit "^3.0.2"
 
-ringcentral-open-api-parser@^0.16.4:
-  version "0.16.4"
-  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.16.4.tgz#1e3f7b62d9f95dfc1e49fd8e0e144fb70ad81cc7"
-  integrity sha512-t4XqK57QsPxCtQkTA/EDKxoGt6evIW7+pI+978JyZxMsJEQJ0U1T2r+oB7YLqm8pm7fox3RYo3HCUS++MGpWNA==
+ringcentral-open-api-parser@^0.16.5:
+  version "0.16.5"
+  resolved "https://registry.yarnpkg.com/ringcentral-open-api-parser/-/ringcentral-open-api-parser-0.16.5.tgz#9b9c7be9ee7a891f11c76a2495460e61c9759a66"
+  integrity sha512-tfK7oUiiYG3d8Jb+5NCeMhbCjUdSYrSHdCc3wLOY0/9RFYUAzXjfhcf6BNYVFvNflse0E0kG2quHM10SHjoBsQ==
   dependencies:
     js-yaml "^4.1.1"
     lodash "^4.18.1"

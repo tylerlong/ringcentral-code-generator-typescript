@@ -1,5 +1,5 @@
 import R from "ramda";
-import { Path } from "ringcentral-open-api-parser/lib/types";
+import { Path } from "ringcentral-open-api-parser";
 import { camelCase } from "change-case";
 import fs from "fs";
 import path from "path";
