@@ -1,7 +1,7 @@
 import path from "path";
 import { spawnSync } from "child_process";
-import { Field, Model } from "ringcentral-open-api-parser";
-import R from "ramda";
+import type { Field, Model } from "ringcentral-open-api-parser";
+import * as R from "ramda";
 import fs from "fs";
 
 const generate = (models: Model[], outputDir: string) => {

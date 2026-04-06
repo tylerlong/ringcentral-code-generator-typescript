@@ -1,11 +1,11 @@
 import fs from "fs";
 import path from "path";
 import { spawnSync } from "child_process";
-import { Operation, Path } from "ringcentral-open-api-parser";
+import type { Operation, Path } from "ringcentral-open-api-parser";
 import { camelCase, capitalCase, pascalCase } from "change-case";
-import R from "ramda";
+import * as R from "ramda";
 
-import { capitalizeFirstLetter, patchSrcFile } from "./utils";
+import { capitalizeFirstLetter, patchSrcFile } from "./utils.js";
 
 const generate = (paths: Path[], outputDir: string) => {
   outputDir = path.join(outputDir, "paths");

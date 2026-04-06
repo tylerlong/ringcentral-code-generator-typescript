@@ -1,10 +1,10 @@
-import R from "ramda";
-import { Path } from "ringcentral-open-api-parser";
+import * as R from "ramda";
+import type { Path } from "ringcentral-open-api-parser";
 import { camelCase } from "change-case";
 import fs from "fs";
 import path from "path";
 
-import { capitalizeFirstLetter } from "./utils";
+import { capitalizeFirstLetter } from "./utils.js";
 
 const generate = (paths: Path[], outputDir: string) => {
   const markdown = ["# RingCentral TypeScript Code Samples"];

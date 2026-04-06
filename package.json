@@ -2,6 +2,7 @@
   "name": "ringcentral-code-generator",
   "version": "0.7.7",
   "license": "MIT",
+  "type": "module",
   "main": "build/index.js",
   "scripts": {
     "test": "tsx -r dotenv-override-true/config src/test.ts",
