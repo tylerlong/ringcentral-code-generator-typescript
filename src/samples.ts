@@ -1,15 +1,17 @@
+import fs from "node:fs";
+import path from "node:path";
+import { camelCase } from "change-case";
 import * as R from "ramda";
 import type { Path } from "ringcentral-open-api-parser";
-import { camelCase } from "change-case";
-import fs from "fs";
-import path from "path";
 
 import { capitalizeFirstLetter } from "./utils.js";
 
 const generate = (paths: Path[], outputDir: string) => {
   const markdown = ["# RingCentral TypeScript Code Samples"];
-
-  paths = R.sortBy((item: Path) => item.operations[0]?.endpoint ?? "", paths);
+  const sortedPaths = R.sortBy(
+    (item: Path) => item.operations[0]?.endpoint ?? "",
+    paths,
+  );
 
   const buildPath = (s: string): string => {
     const tokens = s.split("/").filter((t) => t.length > 0);
@@ -28,7 +30,7 @@ const generate = (paths: Path[], outputDir: string) => {
     return result;
   };
 
-  for (const path of paths.filter((item) => item.operations.length > 0)) {
+  for (const path of sortedPaths.filter((item) => item.operations.length > 0)) {
     for (const operation of path.operations) {
       const parameters = [];
       if (operation.bodyParameters) {
@@ -54,9 +56,9 @@ const generate = (paths: Path[], outputDir: string) => {
       );
       markdown.push("await rc.authorize({jwt});");
       markdown.push(
-        `const result = await rc${
-          buildPath(operation.endpoint)
-        }.${operation.method2}(${parameters.join(", ")});`,
+        `const result = await rc${buildPath(
+          operation.endpoint,
+        )}.${operation.method2}(${parameters.join(", ")});`,
       );
       markdown.push("await rc.revoke();");
       markdown.push("```\n");
@@ -84,11 +86,9 @@ const generate = (paths: Path[], outputDir: string) => {
 
       for (const parameter of parameters) {
         markdown.push(
-          `- \`${parameter}\` is of type [${
-            capitalizeFirstLetter(
-              parameter,
-            )
-          }](./definitions/${capitalizeFirstLetter(parameter)}.ts)`,
+          `- \`${parameter}\` is of type [${capitalizeFirstLetter(
+            parameter,
+          )}](./definitions/${capitalizeFirstLetter(parameter)}.ts)`,
         );
       }
 
@@ -113,12 +113,10 @@ const generate = (paths: Path[], outputDir: string) => {
       }
 
       markdown.push(
-        `\n[Try it out](https://developer.ringcentral.com/api-reference#${
-          operation.tags![0].replace(
-            / /g,
-            "-",
-          )
-        }-${operation.operationId}) in API Explorer.`,
+        `\n[Try it out](https://developer.ringcentral.com/api-reference#${operation.tags?.[0].replace(
+          / /g,
+          "-",
+        )}-${operation.operationId}) in API Explorer.`,
       );
     }
   }

@@ -1,13 +1,13 @@
-import path from "path";
-import { spawnSync } from "child_process";
-import type { Field, Model } from "ringcentral-open-api-parser";
+import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import * as R from "ramda";
-import fs from "fs";
+import type { Field, Model } from "ringcentral-open-api-parser";
 
 const generate = (models: Model[], outputDir: string) => {
-  outputDir = path.join(outputDir, "definitions");
-  spawnSync("rm", ["-rf", outputDir]);
-  spawnSync("mkdir", [outputDir]);
+  const definitionsOutputDir = path.join(outputDir, "definitions");
+  spawnSync("rm", ["-rf", definitionsOutputDir]);
+  spawnSync("mkdir", [definitionsOutputDir]);
 
   const normalizeField = (f: Field): Field => {
     if (f.$ref) {
@@ -15,17 +15,18 @@ const generate = (models: Model[], outputDir: string) => {
     } else if (f.type === "integer" || f.type === "number") {
       f.type = "number";
     } else if (f.type === "array") {
-      f.type = `${normalizeField(f.items!).type}[]`;
+      if (!f.items) {
+        throw new Error("Array field missing items definition");
+      }
+      f.type = `${normalizeField(f.items).type}[]`;
     } else if (f.type === "boolean") {
       f.type = "boolean";
     } else if (f.type === "string") {
       f.type = "string";
       if (f.enum) {
-        f.type = `(${
-          f.enum
-            .map((i: string) => `'${i.toString().replace(/'/g, "\\'")}'`)
-            .join(" | ")
-        })`;
+        f.type = `(${f.enum
+          .map((i: string) => `'${i.toString().replace(/'/g, "\\'")}'`)
+          .join(" | ")})`;
       }
     } else if (f.type === "byte[]") {
       f.type = "string | Uint8Array | Blob | AsyncIterable<Uint8Array>";
@@ -37,49 +38,51 @@ const generate = (models: Model[], outputDir: string) => {
   };
 
   const generateField = (f: Field) => {
-    f = normalizeField(f);
+    const normalizedField = normalizeField(f);
     let p = "";
-    if (f.name.includes("-") || f.name.includes(":") || f.name.includes(".")) {
-      p = `'${f.name}'?: ${f.type};`;
+    if (
+      normalizedField.name.includes("-") ||
+      normalizedField.name.includes(":") ||
+      normalizedField.name.includes(".")
+    ) {
+      p = `'${normalizedField.name}'?: ${normalizedField.type};`;
     } else {
-      p = `${f.name}?: ${f.type};`;
+      p = `${normalizedField.name}?: ${normalizedField.type};`;
     }
 
     p = ` */\n  ${p}`;
-    if (f.default) {
-      p = ` * Default: ${f.default}\n  ${p}`;
+    if (normalizedField.default) {
+      p = ` * Default: ${normalizedField.default}\n  ${p}`;
     }
-    if (f.example) {
-      p = ` * Example: ${f.example}\n  ${p}`;
+    if (normalizedField.example) {
+      p = ` * Example: ${normalizedField.example}\n  ${p}`;
     }
-    if (f.format) {
-      p = ` * Format: ${f.format}\n  ${p}`;
+    if (normalizedField.format) {
+      p = ` * Format: ${normalizedField.format}\n  ${p}`;
     }
-    if (f.minimum) {
-      p = ` * Minimum: ${f.minimum}\n  ${p}`;
+    if (normalizedField.minimum) {
+      p = ` * Minimum: ${normalizedField.minimum}\n  ${p}`;
     }
-    if (f.maximum) {
-      p = ` * Maximum: ${f.maximum}\n  ${p}`;
+    if (normalizedField.maximum) {
+      p = ` * Maximum: ${normalizedField.maximum}\n  ${p}`;
     }
-    if (f.required) {
+    if (normalizedField.required) {
       p = ` * Required\n  ${p}`;
     }
-    if (f.description) {
-      p = ` * ${f.description.trim().split("\n").join("\n *  ")}\n  ${p}`;
+    if (normalizedField.description) {
+      p = ` * ${normalizedField.description.trim().split("\n").join("\n *  ")}\n  ${p}`;
     }
     p = `/**\n  ${p}`;
     return p;
   };
 
-  models.forEach((model) => {
+  for (const model of models) {
     let code = `${
       model.description
-        ? `/**\n${
-          model.description
+        ? `/**\n${model.description
             .split("\n")
-            .map((line) => " * " + line)
-            .join("\n")
-        }\n*/\n`
+            .map((line) => ` * ${line}`)
+            .join("\n")}\n*/\n`
         : ""
     }interface ${model.name} {
     ${model.fields.map((f) => generateField(f)).join("\n\n  ")}
@@ -97,8 +100,8 @@ export default ${model.name};
       code = `${imports}\n\n${code}`;
     }
 
-    fs.writeFileSync(path.join(outputDir, `${model.name}.ts`), code);
-  });
+    fs.writeFileSync(path.join(definitionsOutputDir, `${model.name}.ts`), code);
+  }
 };
 
 export default generate;

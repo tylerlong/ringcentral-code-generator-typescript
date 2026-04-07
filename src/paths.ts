@@ -1,16 +1,16 @@
-import fs from "fs";
-import path from "path";
-import { spawnSync } from "child_process";
-import type { Operation, Path } from "ringcentral-open-api-parser";
+import { spawnSync } from "node:child_process";
+import fs from "node:fs";
+import path from "node:path";
 import { camelCase, capitalCase, pascalCase } from "change-case";
 import * as R from "ramda";
+import type { Operation, Path } from "ringcentral-open-api-parser";
 
 import { capitalizeFirstLetter, patchSrcFile } from "./utils.js";
 
 const generate = (paths: Path[], outputDir: string) => {
-  outputDir = path.join(outputDir, "paths");
-  spawnSync("rm", ["-rf", outputDir]);
-  spawnSync("mkdir", [outputDir]);
+  const pathsOutputDir = path.join(outputDir, "paths");
+  spawnSync("rm", ["-rf", pathsOutputDir]);
+  spawnSync("mkdir", [pathsOutputDir]);
 
   const generatePathMethod = (
     parameter: string | undefined,
@@ -22,31 +22,28 @@ const generate = (paths: Path[], outputDir: string) => {
       return `public path(withParameter = true): string {
     if (withParameter && this.${parameter} !== null) {
         return \`${
-        hasParent ? "${this._parent.path()}" : ""
-      }/${token}/\${this.${parameter}}\`;
+          hasParent ? "${this._parent.path()}" : ""
+        }/${token}/\${this.${parameter}}\`;
     }
     return ${hasParent ? "`${this._parent.path()}" : "'"}/${token}${
-        hasParent ? "`" : "'"
-      };
-  }`;
-    } else {
-      let parentPath = "";
-      if (hasParent) {
-        if (noParentParameter) {
-          parentPath = "${this._parent.path(false)}";
-        } else {
-          parentPath = "${this._parent.path()}";
-        }
-      }
-      return `public path(): string {
-    return ${hasParent ? "`" : "'"}${parentPath}/${
-        token.replace(
-          "dotSearch",
-          ".search",
-        )
-      }${hasParent ? "`" : "'"};
+      hasParent ? "`" : "'"
+    };
   }`;
     }
+    let parentPath = "";
+    if (hasParent) {
+      if (noParentParameter) {
+        parentPath = "${this._parent.path(false)}";
+      } else {
+        parentPath = "${this._parent.path()}";
+      }
+    }
+    return `public path(): string {
+    return ${hasParent ? "`" : "'"}${parentPath}/${token.replace(
+      "dotSearch",
+      ".search",
+    )}${hasParent ? "`" : "'"};
+  }`;
   };
 
   const generateConstructor = (
@@ -66,8 +63,8 @@ const generate = (paths: Path[], outputDir: string) => {
         `\n  public constructor(_parent: ParentInterface${
           parameter
             ? `, ${parameter}: string | null = ${
-              defaultValue ? `'${defaultValue}'` : null
-            }`
+                defaultValue ? `'${defaultValue}'` : null
+              }`
             : ""
         }) {`,
       );
@@ -78,8 +75,8 @@ const generate = (paths: Path[], outputDir: string) => {
         `\n  public constructor(rc: RingCentralInterface${
           parameter
             ? `, ${parameter}: string | null = ${
-              defaultValue ? `'${defaultValue}'` : null
-            }`
+                defaultValue ? `'${defaultValue}'` : null
+              }`
             : ""
         }) {`,
       );
@@ -100,16 +97,14 @@ const generate = (paths: Path[], outputDir: string) => {
     // comments
     const comments = ["/**"];
     comments.push(
-      `${
-        (
-          operation.description ||
-          operation.summary ||
-          capitalCase(operation.operationId)
-        )
-          .split("\n")
-          .map((l) => ` * ${l}`)
-          .join("\n")
-      }`,
+      `${(
+        operation.description ||
+        operation.summary ||
+        capitalCase(operation.operationId)
+      )
+        .split("\n")
+        .map((l) => ` * ${l}`)
+        .join("\n")}`,
     );
     comments.push(` * HTTP Method: ${operation.method}`);
     comments.push(` * Endpoint: ${operation.endpoint}`);
@@ -145,11 +140,9 @@ const generate = (paths: Path[], outputDir: string) => {
         methodParams.push(`${operation.bodyParameters}: ${operation.bodyType}`);
       } else {
         methodParams.push(
-          `${operation.bodyParameters}: ${
-            capitalizeFirstLetter(
-              operation.bodyParameters,
-            )
-          }`,
+          `${operation.bodyParameters}: ${capitalizeFirstLetter(
+            operation.bodyParameters,
+          )}`,
         );
       }
     }
@@ -181,11 +174,9 @@ const generate = (paths: Path[], outputDir: string) => {
 
     // result
     result += `
-  public async ${operation.method2}(${
-      methodParams.join(
-        ", ",
-      )
-    }): Promise<${responseType}> {\n`;
+  public async ${operation.method2}(${methodParams.join(
+    ", ",
+  )}): Promise<${responseType}> {\n`;
     if (operation.withParameter) {
       result += `    if (this.${parameter} === null)
     {
@@ -194,41 +185,37 @@ const generate = (paths: Path[], outputDir: string) => {
 `;
     }
     if (operation.multipart) {
-      result +=
-        `const formData = await Utils.getFormData(${operation.bodyParameters});\n`;
+      result += `const formData = await Utils.getFormData(${operation.bodyParameters});\n`;
     }
-    result +=
-      `    const r = await this.rc.${operation.method}<${responseType}>(${
-        requestParams.join(", ")
-      });
+    result += `    const r = await this.rc.${operation.method}<${responseType}>(${requestParams.join(
+      ", ",
+    )});
     return r.data;
   }`;
     return result;
   };
 
   for (const item of paths) {
+    const lastPath = R.last(item.paths);
+    if (!lastPath) {
+      continue;
+    }
     const itemPaths = item.paths.map((p) => pascalCase(p));
     let code = `class Index {
-  ${
-      generateConstructor(
-        item.parameter,
-        item.defaultParameter,
-        R.init(itemPaths),
-      )
-    }
-  ${
-      generatePathMethod(
-        item.parameter,
-        R.last(item.paths)!,
-        itemPaths.length > 1,
-        item.noParentParameter === true,
-      )
-    }
-${
-      item.operations
-        .map((operation) => generateOperationMethod(operation, item.parameter))
-        .join("\n\n")
-    }
+  ${generateConstructor(
+    item.parameter,
+    item.defaultParameter,
+    R.init(itemPaths),
+  )}
+  ${generatePathMethod(
+    item.parameter,
+    lastPath,
+    itemPaths.length > 1,
+    item.noParentParameter === true,
+  )}
+${item.operations
+  .map((operation) => generateOperationMethod(operation, item.parameter))
+  .join("\n\n")}
 }
 export default Index;
 `;
@@ -241,11 +228,9 @@ export default Index;
     if (item.operations.length > 0) {
       temp += ", RestRequestConfig";
     }
-    code = `import { ${temp} } from '${
-      Array(item.paths.length + 1)
-        .fill("..")
-        .join("/")
-    }/types.js';\n\n${code}`;
+    code = `import { ${temp} } from '${Array(item.paths.length + 1)
+      .fill("..")
+      .join("/")}/types.js';\n\n${code}`;
     const definitionsUsed = new Set<string>();
     for (const operation of item.operations) {
       if (operation.bodyParameters && !operation.bodyType) {
@@ -263,21 +248,17 @@ export default Index;
       }
     }
     for (const definitionUsed of definitionsUsed) {
-      code = `import ${definitionUsed} from "${
-        Array(item.paths.length + 1)
-          .fill("..")
-          .join("/")
-      }/definitions/${definitionUsed}.js";\n${code}`;
+      code = `import ${definitionUsed} from "${Array(item.paths.length + 1)
+        .fill("..")
+        .join("/")}/definitions/${definitionUsed}.js";\n${code}`;
     }
     if (code.indexOf("Utils.") !== -1) {
-      code = `import Utils from '${
-        Array(item.paths.length + 1)
-          .fill("..")
-          .join("/")
-      }/Utils.js';\n${code}`;
+      code = `import Utils from '${Array(item.paths.length + 1)
+        .fill("..")
+        .join("/")}/Utils.js';\n${code}`;
     }
 
-    const folder = path.join(outputDir, ...itemPaths);
+    const folder = path.join(pathsOutputDir, ...itemPaths);
     fs.mkdirSync(folder, { recursive: true });
     fs.writeFileSync(path.join(folder, "index.ts"), code.trim());
 
@@ -285,28 +266,26 @@ export default Index;
     if (item.paths.length > 1) {
       patchSrcFile(
         path.join(
-          outputDir,
+          pathsOutputDir,
           ...R.init(item.paths).map((item) => pascalCase(item)),
           "index.ts",
         ),
         [
-          `import ${pascalCase(R.last(item.paths)!)} from './${
-            pascalCase(
-              R.last(item.paths)!,
-            )
-          }/index.js';`,
+          `import ${pascalCase(lastPath)} from './${pascalCase(
+            lastPath,
+          )}/index.js';`,
         ],
         `
-  public ${camelCase(R.last(item.paths)!)}(${
-          item.parameter
-            ? `${item.parameter}: (string | null) = ${
-              item.defaultParameter ? `'${item.defaultParameter}'` : "null"
-            }`
-            : ""
-        }): ${pascalCase(R.last(item.paths)!)} {
-    return new ${pascalCase(R.last(item.paths)!)}(this${
-          item.parameter ? `, ${item.parameter}` : ""
-        });
+  public ${camelCase(lastPath)}(${
+    item.parameter
+      ? `${item.parameter}: (string | null) = ${
+          item.defaultParameter ? `'${item.defaultParameter}'` : "null"
+        }`
+      : ""
+  }): ${pascalCase(lastPath)} {
+    return new ${pascalCase(lastPath)}(this${
+      item.parameter ? `, ${item.parameter}` : ""
+    });
   }
   `.trim(),
       );
