@@ -16,7 +16,7 @@ themselves.
 ## Install
 
 ```
-yarn add ringcentral-code-generator
+pnpm add ringcentral-code-generator
 ```
 
 ## Usage
@@ -33,5 +33,5 @@ Rename `.env.sample` to `.env`. Edit `.env` to specify the path to spec and the
 output folder.
 
 ```
-yarn test
+pnpm test
 ```
