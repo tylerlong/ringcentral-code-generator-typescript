@@ -1,3 +1,6 @@
+overrides:
+  ringcentral-open-api-parser: link:../ringcentral-open-api-parser
+
 allowBuilds:
   '@biomejs/biome': true
   esbuild: true
